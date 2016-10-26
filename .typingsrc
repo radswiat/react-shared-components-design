@@ -1,0 +1,4 @@
+{
+  "2proxy" : "http://proxy.intra.bt.com:8080",
+  "2rejectUnauthorized": false
+}
