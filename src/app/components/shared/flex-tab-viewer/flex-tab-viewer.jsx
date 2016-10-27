@@ -25,7 +25,7 @@ export class FlexTabViewer extends CoreComponent {
    * @public
    */
   open(tabId) {
-    this.emit('tab:change').then(() => {
+    this.emit('tab:change', {tabId : tabId}).then(() => {
       this.setState({
         active: tabId
       })
@@ -38,22 +38,23 @@ export class FlexTabViewer extends CoreComponent {
    */
   render() {
     return (
-      <div className={`comp-flex-tab-viewer ${this.state.layout}`}>
+      <div className={`ftb ${this.state.layout}`}>
         <h4>Flex tab viewer</h4>
-        <div className="cftb__container">
+        <div className="ftb__container">
           {/* Tab section */}
-          <div className="cftb__tabs">
+          <div className="ftb__tabs">
             {this.props.children.map((child, key) => {
               return (
-                <div className={`tab ${this.state.active === key ? 'active' : ''}`}
+                <div className={`tab ${this.state.active === key ? 'tab--active' : ''}`}
                      key={key}
+                     ref={`tab-${key}`}
                      onClick={ () => this.open(key) }>{child.props.children[0]}</div>
               )
             })
             }
           </div>
           {/* Tab contents */}
-          <div className="cftb__contents">
+          <div className="ftb__contents">
             {this.props.children.map((child, key) => {
               return (
                 <div key={key}>

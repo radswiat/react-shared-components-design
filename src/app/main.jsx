@@ -19,8 +19,30 @@ class ReactApp extends React.Component{
         <h1>React</h1>
         <FlexTabViewer
           active={1}
-          plugins={{'dtm': false}}
-          layout="style-a">
+          plugins={{'dtm': false, 'password' : false}}
+          layout="ftb--underline-pink">
+          <tab1>
+            <span>Mobile</span>
+            <div>{this.title} 1 Mobile</div>
+          </tab1>
+          <tab2>
+            <span>TV</span>
+            <div>{this.title} 2 TV content</div>
+          </tab2>
+          <tab3>
+            <span>BB</span>
+            <div>{this.title} 3 BB content</div>
+          </tab3>
+          <tab4>
+            <span>Phone</span>
+            <div>{this.title} 4 Phone content</div>
+          </tab4>
+        </FlexTabViewer>
+        <hr />
+        <FlexTabViewer
+          active={1}
+          plugins={{'animate' : false}}
+          layout="ftb--underline-blue ftb--double-size">
           <tab1>
             <span>Mobile</span>
             <div>{this.title} 1 Mobile</div>
@@ -30,8 +52,10 @@ class ReactApp extends React.Component{
             <div>{this.title} 2 TV content</div>
           </tab2>
         </FlexTabViewer>
-        <hr />
-        <FlexTabViewer active={1} layout="style-b">
+        <FlexTabViewer
+          active={1}
+          plugins={{'animate' : false, 'disable' : false, password: false}}
+          layout="ftb--underline-blue">
           <tab1>
             <span>Mobile</span>
             <div>{this.title} 1 Mobile</div>

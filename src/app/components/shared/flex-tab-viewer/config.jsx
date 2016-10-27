@@ -1,11 +1,13 @@
 import {dtm} from './plugins/dtm';
 import {password} from './plugins/password';
+import {animate} from './plugins/animate';
+import {disable} from './plugins/disable';
 
 let config = {
-  plugins : [dtm, password],
+  plugins : [disable, animate, dtm, password],
   props : {
     active : 0,
-    layout : 'style-a'
+    layout : ''
   }
 }
 

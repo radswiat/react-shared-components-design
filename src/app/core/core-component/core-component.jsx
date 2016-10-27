@@ -14,7 +14,8 @@ export class CoreComponent extends React.Component {
   /**
    * Convert dot:notation:string to camelCaseString
    * @param string
-   * @returns {any|void}
+   * TODO: move to utils
+   * @returns {string}
    */
   static dotToCamel(string: string[]) {
     return string.replace(/:(.)/g, (string) => {
@@ -22,7 +23,12 @@ export class CoreComponent extends React.Component {
     });
   }
 
-
+  /**
+   * Get function name from Function
+   * @param func
+   * TODO: move to utils
+   * @returns {string}
+   */
   static getFuncName(func) {
     let name;
     if (func.prototype.name === undefined) {
@@ -32,11 +38,25 @@ export class CoreComponent extends React.Component {
   }
 
   /**
+   * Clone object
+   * TODO: move to utils
+   * @returns {object}
+   */
+  static clone(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+      if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
+  }
+
+  /**
    * Merge config & props
    * set them as a state
    * @private
    */
-  mergePropsAndConfigWithState() {
+  _mergePropsAndConfigWithState() {
     for (let key of Object.keys(this.config.props)) {
       this.setState({
         [key]: this.props[key] || this.config.props[key]
@@ -49,10 +69,10 @@ export class CoreComponent extends React.Component {
    * - cross check if they are not disabled by props.plugins
    * @private
    */
-  initPlugins() {
+  _initPlugins() {
     this.config.plugins.forEach((Plugin) => {
       if (this.props.plugins !== void 0) {
-        if (this.props.plugins[CoreComponent.getFuncName(Plugin)]) {
+        if (this.props.plugins[CoreComponent.getFuncName(Plugin)] !== false) {
           this.plugins.push(new Plugin());
         }
       } else {
@@ -61,37 +81,45 @@ export class CoreComponent extends React.Component {
     })
   }
 
+
+  _emitNext(eventName, resolve, reject, plugins, extraData) {
+
+    // no more plugins ? resolve!
+    if(!plugins.length) { resolve(); return; }
+
+    let plugin = plugins.shift();
+
+    if (typeof plugin[eventName] === 'function') {
+      new Promise((resolve, reject) => {
+        plugin[eventName](this, resolve, reject, extraData);
+      }).then(() => {
+        this._emitNext(eventName, resolve, reject, plugins, extraData);
+      }).catch(() => { reject(); });
+      return;
+    }
+
+    // next
+    this._emitNext(eventName, resolve, reject, plugins, extraData);
+  }
+
   /**
    * When component mount
    * @protected
    */
   componentWillMount() {
-    this.initPlugins();
-    this.mergePropsAndConfigWithState();
+    this._initPlugins();
+    this._mergePropsAndConfigWithState();
   }
+
 
   /**
    * Emit event to be catch by plugins
    * @protected
    */
-  emit(eventName) {
+  emit(eventName, extraData) {
     eventName = CoreComponent.dotToCamel('on:' + eventName);
     return new Promise((resolve, reject) => {
-      let pluginsPromises = [];
-      this.plugins.forEach((plugin) => {
-        pluginsPromises.push(new Promise((resolve, reject) => {
-          if (typeof plugin[eventName] === 'function') {
-            plugin[eventName](resolve, reject);
-          } else {
-            resolve();
-          }
-        }));
-      })
-      Promise.all(pluginsPromises).then(() => {
-        resolve()
-      }, () => {
-        console.error('reject!?');
-      });
+      this._emitNext(eventName, resolve, reject, CoreComponent.clone(this.plugins), extraData);
     })
   }
 

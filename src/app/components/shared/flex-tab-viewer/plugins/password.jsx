@@ -4,7 +4,7 @@ export class password {
 
   }
 
-  onTabChange(resolve, reject) {
+  onTabChange(context, resolve, reject) {
     var password = prompt("What is a password?");
     if (password === 'bt') {
       resolve();
