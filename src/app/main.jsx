@@ -2,6 +2,7 @@
 import * as React       from 'react';
 import * as ReactDOM    from 'react-dom';
 import {FlexTabViewer}  from './components/shared/flex-tab-viewer/flex-tab-viewer';
+import {FlexColViewer}  from './components/shared/flex-col-viewer/flex-col-viewer';
 
 /**
  * React app class
@@ -17,6 +18,12 @@ class ReactApp extends React.Component{
     return (
       <div>
         <h1>React</h1>
+
+        <FlexColViewer>
+        </FlexColViewer>
+
+
+
         <FlexTabViewer
           active={1}
           plugins={{'dtm': false, 'password' : false}}
